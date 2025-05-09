@@ -3,6 +3,11 @@ class SudokuSolver {
     if (puzzleString.length != 81) {
       return "NO!";
     }
+    let regEx = /[^1-9]^\./;
+    console.log("match", puzzleString.match(regEx));
+    if (regEx.test(puzzleString)) {
+      return "NO";
+    }
 
     return "";
   }

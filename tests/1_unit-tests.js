@@ -5,10 +5,15 @@ const Solver = require("../controllers/sudoku-solver.js");
 let solver = new Solver();
 
 suite("Unit Tests", () => {
-  function createRandomString(length) {
-    const chars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  function createRandomString(length, valid) {
+    let chars;
     let result = "";
+
+    if (valid) {
+      chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    } else {
+      chars = ",#+)(}{][|'";
+    }
     for (let i = 0; i < length; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
@@ -16,12 +21,16 @@ suite("Unit Tests", () => {
   }
   suite("string validation", () => {
     test("Logic handles a valid puzzle string of 81 characters", () => {
-      assert.equal(solver.validate(createRandomString(81)), "");
+      assert.equal(solver.validate(createRandomString(81, true)), "");
+    });
+    test("Logic handles a puzzle string with invalid characters (not 1-9 or .)", () => {
+      assert.equal(solver.validate(createRandomString(81, false)), "NO!");
     });
   });
 });
 
 /**Logic handles a valid puzzle string of 81 characters
+ * 
 Logic handles a puzzle string with invalid characters (not 1-9 or .)
 Logic handles a puzzle string that is not 81 characters in length
 Logic handles a valid row placement
