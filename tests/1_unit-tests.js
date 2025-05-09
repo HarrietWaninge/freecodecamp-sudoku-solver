@@ -5,9 +5,18 @@ const Solver = require("../controllers/sudoku-solver.js");
 let solver = new Solver();
 
 suite("Unit Tests", () => {
+  function createRandomString(length) {
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
   suite("string validation", () => {
-    test("Logic handles a puzzle string with invalid characters (not 1-9 or .)", () => {
-      assert.equal(solver.validate("hejjjjjj"), "");
+    test("Logic handles a valid puzzle string of 81 characters", () => {
+      assert.equal(solver.validate(createRandomString(81)), "");
     });
   });
 });
