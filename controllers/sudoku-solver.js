@@ -1,15 +1,17 @@
 class SudokuSolver {
   validate(puzzleString) {
-    if (puzzleString.length != 81) {
-      return "NO!";
-    }
-    let regEx = /[^1-9]^\./;
-    console.log("match", puzzleString.match(regEx));
-    if (regEx.test(puzzleString)) {
-      return "NO";
-    }
+    let regEx = /[^1-9\.]/;
+    let isInvalid =
+      puzzleString.length != 81
+        ? true
+        : regEx.test(puzzleString)
+        ? true
+        : false;
 
-    return "";
+    return isInvalid ? "NO!" : "";
+
+    console.log("test", regEx.test(puzzleString));
+    console.log("match", puzzleString.match(regEx));
   }
 
   checkRowPlacement(puzzleString, row, column, value) {}

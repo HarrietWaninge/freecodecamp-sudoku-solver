@@ -10,13 +10,14 @@ suite("Unit Tests", () => {
     let result = "";
 
     if (valid) {
-      chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      chars = ".123456789";
     } else {
       chars = ",#+)(}{][|'";
     }
     for (let i = 0; i < length; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
+    console.log("result:", result);
     return result;
   }
   suite("string validation", () => {
