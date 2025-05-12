@@ -9,9 +9,6 @@ class SudokuSolver {
         : false;
 
     return isInvalid ? "NO!" : "";
-
-    console.log("test", regEx.test(puzzleString));
-    console.log("match", puzzleString.match(regEx));
   }
 
   checkRowPlacement(puzzleString, row, column, value) {}

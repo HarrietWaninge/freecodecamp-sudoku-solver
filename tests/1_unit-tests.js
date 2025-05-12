@@ -27,13 +27,16 @@ suite("Unit Tests", () => {
     test("Logic handles a puzzle string with invalid characters (not 1-9 or .)", () => {
       assert.equal(solver.validate(createRandomString(81, false)), "NO!");
     });
+    test("Logic handles a puzzle string that is not 81 characters in length", () => {
+      assert.equal(solver.validate(createRandomString(80, true)), "NO!");
+      assert.equal(solver.validate(createRandomString(80, false)), "NO!");
+    });
   });
 });
 
-/**Logic handles a valid puzzle string of 81 characters
+/**
  * 
-Logic handles a puzzle string with invalid characters (not 1-9 or .)
-Logic handles a puzzle string that is not 81 characters in length
+
 Logic handles a valid row placement
 Logic handles an invalid row placement
 Logic handles a valid column placement
