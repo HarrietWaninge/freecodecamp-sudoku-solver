@@ -63,6 +63,12 @@ suite("Unit Tests", () => {
         false
       );
     });
+    test("Logic handles a valid region (3x3 grid) placement", () => {
+      assert.equal(
+        solver.checkRegionPlacement(puzzlesAndSolutions[0][0], "A", 2, 4),
+        true
+      );
+    });
   });
 });
 

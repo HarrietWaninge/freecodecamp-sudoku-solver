@@ -1,8 +1,7 @@
 class SudokuSolver {
   constructor() {
-    this.numberOfColums = 9;
-    this.numberOfRows = 9;
-    this.numberOfCharacters = this.numberOfColums * this.numberOfRows;
+    this.numberOfColsRows = 9;
+    this.numberOfCharacters = this.numberOfColsRows * this.numberOfColsRows;
   }
 
   validate(puzzleString) {
@@ -25,8 +24,8 @@ class SudokuSolver {
   getTargetRow(puzzleString, row) {
     const rowLetters = "abcdefghijklmnopqrstuvwxyz";
     let regex = new RegExp(`${row}`, "i");
-    let numberEnd = this.numberOfRows * (rowLetters.match(regex).index + 1);
-    let numberStart = numberEnd - this.numberOfRows;
+    let numberEnd = this.numberOfColsRows * (rowLetters.match(regex).index + 1);
+    let numberStart = numberEnd - this.numberOfColsRows;
     let targetRow = puzzleString.substring(numberStart, numberEnd);
     return targetRow;
   }
@@ -48,7 +47,38 @@ class SudokuSolver {
   }
 
   checkRegionPlacement(puzzleString, row, column, value) {
-    let targetRegion = getTargetRegion();
+    let numberOfRegions = this.numberOfCharacters / this.numberOfColsRows;
+    /** find out in which region the value should be placed */
+
+    /** I want to get a string of 9 characters from the region */
+    let targetRegion = this.getTargetRegion(puzzleString, row, column);
+    return true;
+  }
+
+  getTargetRegion(puzzleString, row, column) {
+    let rowRegionNumber = this.getRowRegionNumber(row);
+    let columnRegionNumber = this.getColumnRegionNumber(column);
+
+    let string = "";
+
+    for (let i = 0; i < this.numberOfCharacters; i++) {
+      console.log("i", i);
+      //regionNumber
+      // i want to put it in to arrays. so I can put
+      if(i)
+    }
+
+    return "";
+  }
+
+  getRowRegionNumber(row) {
+    const rowLetters = "abcdefghijklmnopqrstuvwxyz";
+    let indexOfRow = rowLetters.indexOf(row.toLowerCase());
+    let rowRegionNumber = Math.floor(indexOfRow / 3) + 1;
+    return rowRegionNumber;
+  }
+  getColumnRegionNumber(column) {
+    return Math.floor(column / 3) + 1;
   }
 
   solve(puzzleString) {}
