@@ -69,12 +69,17 @@ suite("Unit Tests", () => {
         true
       );
     });
+    test("Logic handles an invalid region (3x3 grid) placement", () => {
+      assert.equal(
+        solver.checkRegionPlacement(puzzlesAndSolutions[0][0], "D", 7, 4),
+        false
+      );
+    });
   });
 });
 
 /**
  * 
-Logic handles a valid region (3x3 grid) placement
 Logic handles an invalid region (3x3 grid) placement
 Valid puzzle strings pass the solver
 Invalid puzzle strings fail the solver
