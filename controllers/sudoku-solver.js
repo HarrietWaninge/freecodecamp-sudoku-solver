@@ -17,11 +17,11 @@ class SudokuSolver {
   }
 
   checkRowPlacement(puzzleString, row, column, value) {
-    let targetRow = this.getTargetRow(puzzleString, row);
+    let targetRow = this.getRowString(puzzleString, row);
     let isPresent = targetRow.includes(value);
     return !isPresent;
   }
-  getTargetRow(puzzleString, row) {
+  getRowString(puzzleString, row) {
     const rowLetters = "abcdefghijklmnopqrstuvwxyz";
     let regex = new RegExp(`${row}`, "i");
     let numberEnd = this.numberOfColsRows * (rowLetters.match(regex).index + 1);
@@ -31,12 +31,12 @@ class SudokuSolver {
   }
 
   checkColPlacement(puzzleString, row, column, value) {
-    let targetColumn = this.getTargetColumn(puzzleString, column);
+    let targetColumn = this.getColumnString(puzzleString, column);
     let isPresent = targetColumn.includes(value);
     return !isPresent;
   }
 
-  getTargetColumn(puzzleString, column) {
+  getColumnString(puzzleString, column) {
     let targetColumn = "";
     for (let i = 0; i < this.numberOfCharacters; i++) {
       if (i % 9 == column - 1) {
@@ -47,68 +47,30 @@ class SudokuSolver {
   }
 
   checkRegionPlacement(puzzleString, row, column, value) {
-    let numberOfRegions = this.numberOfCharacters / this.numberOfColsRows;
-    /** find out in which region the value should be placed */
+    let regionString = this.getRegionString(puzzleString, row, column);
+    let isPresent = regionString.includes(value);
 
-    /** I want to get a string of 9 characters from the region */
-    let targetRegion = this.getTargetRegion(puzzleString, row, column);
-    return true;
+    return !isPresent;
   }
 
-  getTargetRegion(puzzleString, row, column) {
+  getRegionString(puzzleString, row, column) {
     let rowRegionIndex = this.getRowRegionIndex(row);
     let columnRegionIndex = this.getColumnRegionIndex(column);
-
-    /*stel, rowReI = 0   dan wil ik hebben  
-    0,1,2   (8)
-    9, 10, 11, (17)
-    18, 19, 20  (26)
-
-    stel rowRei = 0, colRe = 1
-    3,4,5
-    12,13,14
-    21,22,13
-
-dus ergens moet ik de 
-
-81 verdelen. en vergelijken met 0, 1, 2
-
-characters ((81) / 3) X (rowRegionIndex)    voor index 0 dat is 
-
-- (81/3)
-
-0 x 27 = 0  + 9 + 9
-1x  27 = 27
-2x  27 = 81
-
-
-    
-     colRegI = 0
-
-     */
-
-    let string = "";
+    let regionString = "";
 
     for (let i = 0; i < this.numberOfCharacters; i++) {
-      console.log("i", i);
-      //regionNumber
-      // i want to put it in to arrays. so I can
-      // if(i)
-      // console.log(i % 9);
       if (
-        i % 9 == 0 &&
+        i % 9 == columnRegionIndex * 3 && //don't make me think about this again please
         i >= (this.numberOfCharacters / 3) * rowRegionIndex &&
         i < (this.numberOfCharacters / 3) * (rowRegionIndex + 1)
       ) {
-        console.log("remainder i", i);
         for (let j = 0; j < 3; j++) {
           // put the three characters at and after index i in the string
-          string = string + puzzleString[i + j];
-          console.log(string);
+          regionString = regionString + puzzleString[i + j];
         }
       }
     }
-    return "";
+    return regionString;
   }
 
   getRowRegionIndex(row) {
@@ -118,7 +80,7 @@ characters ((81) / 3) X (rowRegionIndex)    voor index 0 dat is
     return rowRegionIndex;
   }
   getColumnRegionIndex(column) {
-    return Math.floor(column / 3);
+    return Math.floor((column - 1) / 3);
   }
 
   solve(puzzleString) {}
