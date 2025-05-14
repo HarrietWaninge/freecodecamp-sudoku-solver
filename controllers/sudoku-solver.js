@@ -56,29 +56,69 @@ class SudokuSolver {
   }
 
   getTargetRegion(puzzleString, row, column) {
-    let rowRegionNumber = this.getRowRegionNumber(row);
-    let columnRegionNumber = this.getColumnRegionNumber(column);
+    let rowRegionIndex = this.getRowRegionIndex(row);
+    let columnRegionIndex = this.getColumnRegionIndex(column);
+
+    /*stel, rowReI = 0   dan wil ik hebben  
+    0,1,2   (8)
+    9, 10, 11, (17)
+    18, 19, 20  (26)
+
+    stel rowRei = 0, colRe = 1
+    3,4,5
+    12,13,14
+    21,22,13
+
+dus ergens moet ik de 
+
+81 verdelen. en vergelijken met 0, 1, 2
+
+characters ((81) / 3) X (rowRegionIndex)    voor index 0 dat is 
+
+- (81/3)
+
+0 x 27 = 0  + 9 + 9
+1x  27 = 27
+2x  27 = 81
+
+
+    
+     colRegI = 0
+
+     */
 
     let string = "";
 
     for (let i = 0; i < this.numberOfCharacters; i++) {
       console.log("i", i);
       //regionNumber
-      // i want to put it in to arrays. so I can put
-      if(i)
+      // i want to put it in to arrays. so I can
+      // if(i)
+      // console.log(i % 9);
+      if (
+        i % 9 == 0 &&
+        i >= (this.numberOfCharacters / 3) * rowRegionIndex &&
+        i < (this.numberOfCharacters / 3) * (rowRegionIndex + 1)
+      ) {
+        console.log("remainder i", i);
+        for (let j = 0; j < 3; j++) {
+          // put the three characters at and after index i in the string
+          string = string + puzzleString[i + j];
+          console.log(string);
+        }
+      }
     }
-
     return "";
   }
 
-  getRowRegionNumber(row) {
+  getRowRegionIndex(row) {
     const rowLetters = "abcdefghijklmnopqrstuvwxyz";
-    let indexOfRow = rowLetters.indexOf(row.toLowerCase());
-    let rowRegionNumber = Math.floor(indexOfRow / 3) + 1;
-    return rowRegionNumber;
+    let rowIndex = rowLetters.indexOf(row.toLowerCase());
+    let rowRegionIndex = Math.floor(rowIndex / 3);
+    return rowRegionIndex;
   }
-  getColumnRegionNumber(column) {
-    return Math.floor(column / 3) + 1;
+  getColumnRegionIndex(column) {
+    return Math.floor(column / 3);
   }
 
   solve(puzzleString) {}
