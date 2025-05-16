@@ -83,7 +83,61 @@ class SudokuSolver {
     return Math.floor((column - 1) / 3);
   }
 
-  solve(puzzleString) {}
+  solve(puzzleString) {
+    let puzzleArray = puzzleString.split("");
+    console.log(puzzleString);
+
+    // while (puzzleString.includes(".")) {
+    for (let i = 0; i < puzzleString.length; i++) {
+      if (puzzleArray[i] === ".") {
+        let options = this.getOptions(puzzleArray, i);
+        if (options.length == 1);
+        puzzleArray[i] = options[0];
+        puzzleString = puzzleArray.join("");
+        console.log(puzzleString);
+      }
+    }
+    //   }
+
+    return true;
+  }
+
+  getOptions(puzzleArray, index) {
+    let coordinates = this.getCoordinates(index);
+    let indexData = { index, ...coordinates, options: [] };
+
+    for (let i = 1; i < 10; i++) {
+      let parameters = [
+        puzzleArray.join(""),
+        coordinates.row,
+        coordinates.col,
+        i,
+      ];
+      if (
+        this.checkColPlacement(...parameters) &&
+        this.checkRowPlacement(...parameters) &&
+        this.checkRegionPlacement(...parameters)
+      ) {
+        indexData.options.push(i);
+      }
+    }
+
+    console.log(indexData);
+    return indexData.options;
+  }
+
+  getCoordinates(index) {
+    //get row letter
+    let alphabet = "abcdefghi";
+    let rowIndex = Math.floor(index / 9);
+    let row = alphabet[rowIndex];
+    console.log("index: ", index, "row: ", row);
+
+    //get column number
+    let columnIndex = index % 9;
+
+    return { row: row, col: columnIndex + 1 };
+  }
 }
 
 module.exports = SudokuSolver;

@@ -76,11 +76,15 @@ suite("Unit Tests", () => {
       );
     });
   });
+  suite("Solving-logic", () => {
+    test("Valid puzzle strings pass the solver", () => {
+      assert.equal(solver.solve(puzzlesAndSolutions[0][0]), true);
+    });
+  });
 });
 
 /**
  * 
-Logic handles an invalid region (3x3 grid) placement
 Valid puzzle strings pass the solver
 Invalid puzzle strings fail the solver
 Solver returns the expected solution for an incomplete puzzle */
