@@ -3,6 +3,7 @@ const assert = chai.assert;
 const {
   puzzlesAndSolutions,
   invalidPuzzles,
+  shortPuzzles,
 } = require("../controllers/puzzle-strings.js");
 
 const Solver = require("../controllers/sudoku-solver.js");
@@ -31,14 +32,26 @@ suite("Unit Tests", () => {
   }
   suite("string validation", () => {
     test("Logic handles a valid puzzle string of 81 characters", () => {
-      assert.equal(solver.validate(createRandomString(81, true)), "");
+      assert.equal(
+        solver.validateCharacters(createRandomString(81, true)),
+        true
+      );
     });
     test("Logic handles a puzzle string with invalid characters (not 1-9 or .)", () => {
-      assert.equal(solver.validate(createRandomString(81, false)), "NO!");
+      assert.deepEqual(
+        solver.validateCharacters(createRandomString(81, false)),
+        {
+          error: "Invalid characters in puzzle",
+        }
+      );
     });
     test("Logic handles a puzzle string that is not 81 characters in length", () => {
-      assert.equal(solver.validate(createRandomString(80, true)), "NO!");
-      assert.equal(solver.validate(createRandomString(80, false)), "NO!");
+      assert.deepEqual(solver.validateCharacters(shortPuzzles[0]), {
+        error: "Expected puzzle to be 81 characters long",
+      });
+      assert.deepEqual(solver.validateCharacters(shortPuzzles[1]), {
+        error: "Expected puzzle to be 81 characters long",
+      });
     });
   });
   suite("Placement Validation", () => {
@@ -88,13 +101,13 @@ suite("Unit Tests", () => {
         );
       }
     });
-    // test("Valid puzzle strings pass the solver", () => {
-    //   for (let i = 0; i < puzzlesAndSolutions.length; i++) {
-    //     assert.equal(solver.solve(invalidPuzzles[i]), {
-    //       error: "Puzzle cannot be solved",
-    //     });
-    //   }
-    // });
+    test("Invalid puzzle strings fail the solver", () => {
+      for (let i = 0; i < puzzlesAndSolutions.length; i++) {
+        assert.deepEqual(solver.solve(invalidPuzzles[i]), {
+          error: "Puzzle cannot be solved",
+        });
+      }
+    });
   });
 });
 

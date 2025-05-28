@@ -4,16 +4,33 @@ class SudokuSolver {
     this.numberOfCharacters = this.numberOfColsRows * this.numberOfColsRows;
   }
 
-  validate(puzzleString) {
+  validateCharacters(puzzleString) {
     let regEx = /[^1-9\.]/;
-    let isInvalid =
-      puzzleString.length != this.numberOfCharacters
-        ? true
-        : regEx.test(puzzleString)
-        ? true
-        : false;
+    let isWrongLength, hasInvalidChar, hasMistakes;
 
-    return isInvalid ? "NO!" : "";
+    hasInvalidChar = regEx.test(puzzleString);
+
+    switch (key) {
+      case value:
+        break;
+
+      default:
+        break;
+    }
+    if (hasInvalidChar) {
+      return { error: "Invalid characters in puzzle" };
+    }
+    isWrongLength = puzzleString.length != this.numberOfCharacters;
+
+    if (isWrongLength) {
+      return { error: "Expected puzzle to be 81 characters long" };
+    }
+    hasMistakes = this.checkValidity(puzzleString);
+    if (hasMistakes) {
+      return { error: "Puzzle cannot be solved" };
+    }
+
+    return true;
   }
 
   checkRowPlacement(puzzleString, row, column, value) {
@@ -88,7 +105,8 @@ class SudokuSolver {
     let puzzleArray = puzzleString.split("");
     let repeat = true;
     let solved;
-    this.checkValidity(puzzleString);
+    if (this.checkValidity(puzzleString)) {
+    }
 
     while (repeat) {
       for (let i = 0; i < puzzleString.length; i++) {
@@ -119,21 +137,15 @@ class SudokuSolver {
   checkValidity(puzzleString) {
     //checkFor Duplicate numbers
     let puzzle = this.getPuzzleGrid(puzzleString);
-    console.log("puzzleString", puzzleString);
     let valid = true;
 
-    //check every existing number on validity.
-    //yes that's what I should do.
+    //check every number on corectness
     for (let i = 0; i < puzzleString.length; i++) {
       if (puzzleString[i] !== ".") {
         let { row, col } = this.getCoordinates(i);
-
         let parameters = [puzzleString, row, col, i];
-        if (
-          this.checkColPlacement(...parameters) &&
-          this.checkRowPlacement(...parameters) &&
-          this.checkRegionPlacement(...parameters)
-        ) {
+        if (this.checkOnePlace(parameters)) {
+          //and set valid to false if a number isn't placed corectly
           valid = false;
         }
       }
@@ -172,11 +184,7 @@ class SudokuSolver {
         coordinates.col,
         i,
       ];
-      if (
-        this.checkColPlacement(...parameters) &&
-        this.checkRowPlacement(...parameters) &&
-        this.checkRegionPlacement(...parameters)
-      ) {
+      if (this.checkOnePlace(parameters)) {
         // if it is an option, put it as an option in the indexData
         indexData.options.push(i);
       }
@@ -196,6 +204,14 @@ class SudokuSolver {
     let columnIndex = index % 9;
 
     return { row: row, col: columnIndex + 1 };
+  }
+
+  checkOnePlace(parameterArray) {
+    return (
+      this.checkColPlacement(...parameterArray) &&
+      this.checkRowPlacement(...parameterArray) &&
+      this.checkRegionPlacement(...parameterArray)
+    );
   }
 }
 
