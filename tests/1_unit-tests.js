@@ -1,6 +1,9 @@
 const chai = require("chai");
 const assert = chai.assert;
-const { puzzlesAndSolutions } = require("../controllers/puzzle-strings.js");
+const {
+  puzzlesAndSolutions,
+  invalidPuzzles,
+} = require("../controllers/puzzle-strings.js");
 
 const Solver = require("../controllers/sudoku-solver.js");
 let solver = new Solver();
@@ -77,14 +80,25 @@ suite("Unit Tests", () => {
     });
   });
   suite("Solving-logic", () => {
-    test("Valid puzzle strings pass the solver", () => {
-      assert.equal(solver.solve(puzzlesAndSolutions[0][0]), true);
+    test("valid puzzle strings pass the solver", () => {
+      for (let i = 0; i < puzzlesAndSolutions.length; i++) {
+        assert.equal(
+          solver.solve(puzzlesAndSolutions[i][0]),
+          puzzlesAndSolutions[i][1]
+        );
+      }
     });
+    // test("Valid puzzle strings pass the solver", () => {
+    //   for (let i = 0; i < puzzlesAndSolutions.length; i++) {
+    //     assert.equal(solver.solve(invalidPuzzles[i]), {
+    //       error: "Puzzle cannot be solved",
+    //     });
+    //   }
+    // });
   });
 });
 
 /**
  * 
-Valid puzzle strings pass the solver
 Invalid puzzle strings fail the solver
 Solver returns the expected solution for an incomplete puzzle */

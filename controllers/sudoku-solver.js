@@ -60,7 +60,7 @@ class SudokuSolver {
 
     for (let i = 0; i < this.numberOfCharacters; i++) {
       if (
-        i % 9 == columnRegionIndex * 3 && //don't make me think about this again please
+        i % 9 == columnRegionIndex * 3 &&
         i >= (this.numberOfCharacters / 3) * rowRegionIndex &&
         i < (this.numberOfCharacters / 3) * (rowRegionIndex + 1)
       ) {
@@ -84,22 +84,80 @@ class SudokuSolver {
   }
 
   solve(puzzleString) {
+    let changedPuzzleString;
     let puzzleArray = puzzleString.split("");
-    console.log(puzzleString);
+    let repeat = true;
+    let solved;
+    this.checkValidity(puzzleString);
 
-    // while (puzzleString.includes(".")) {
+    while (repeat) {
+      for (let i = 0; i < puzzleString.length; i++) {
+        let repeat = false;
+        if (puzzleArray[i] === ".") {
+          //if the character is a dot, get all the possible numbers for this spot
+          let options = this.getOptions(puzzleArray, i);
+          if (options.length === 1) {
+            //if there is only 1 option, put it in place
+            repeat = true;
+            puzzleArray[i] = options[0];
+            changedPuzzleString = puzzleArray.join("");
+          }
+        }
+      }
+      //check if there where any changes from the last itteration, if not, puzzle is solved or unsolvable
+      if (changedPuzzleString === puzzleString) {
+        repeat = false;
+      }
+      puzzleString = changedPuzzleString;
+    }
+    // console.log(puzzleString);
+    solved = !puzzleString.includes(".");
+
+    return solved ? puzzleString : { message: "puzzle isn't solvable" };
+  }
+
+  checkValidity(puzzleString) {
+    //checkFor Duplicate numbers
+    let puzzle = this.getPuzzleGrid(puzzleString);
+    console.log("puzzleString", puzzleString);
+    let valid = true;
+
+    //check every existing number on validity.
+    //yes that's what I should do.
     for (let i = 0; i < puzzleString.length; i++) {
-      if (puzzleArray[i] === ".") {
-        let options = this.getOptions(puzzleArray, i);
-        if (options.length == 1);
-        puzzleArray[i] = options[0];
-        puzzleString = puzzleArray.join("");
-        console.log(puzzleString);
+      if (puzzleString[i] !== ".") {
+        let { row, col } = this.getCoordinates(i);
+
+        let parameters = [puzzleString, row, col, i];
+        if (
+          this.checkColPlacement(...parameters) &&
+          this.checkRowPlacement(...parameters) &&
+          this.checkRegionPlacement(...parameters)
+        ) {
+          valid = false;
+        }
       }
     }
-    //   }
+    return valid;
+  }
 
-    return true;
+  getPuzzleGrid(puzzleString) {
+    //console.log("puzzleString", puzzleString);
+    let grid = [];
+
+    for (let i = 0; i < 9; i++) {
+      let row = [];
+      for (let j = 0; j < 9; j++) {
+        row.push(puzzleString[i * 9 + j]);
+      }
+      grid.push(row);
+    }
+    return grid;
+  }
+  checkForDuplicates(numberArray) {
+    console.log("array to check: ", numberArray);
+    //checks if there are any duplicates in this array
+    return new Set(numberArray).size !== numberArray.length;
   }
 
   getOptions(puzzleArray, index) {
@@ -107,6 +165,7 @@ class SudokuSolver {
     let indexData = { index, ...coordinates, options: [] };
 
     for (let i = 1; i < 10; i++) {
+      //check numbers 1-9 to see if it is an option on this location
       let parameters = [
         puzzleArray.join(""),
         coordinates.row,
@@ -118,11 +177,12 @@ class SudokuSolver {
         this.checkRowPlacement(...parameters) &&
         this.checkRegionPlacement(...parameters)
       ) {
+        // if it is an option, put it as an option in the indexData
         indexData.options.push(i);
       }
     }
 
-    console.log(indexData);
+    // console.log(indexData);
     return indexData.options;
   }
 
@@ -131,7 +191,6 @@ class SudokuSolver {
     let alphabet = "abcdefghi";
     let rowIndex = Math.floor(index / 9);
     let row = alphabet[rowIndex];
-    console.log("index: ", index, "row: ", row);
 
     //get column number
     let columnIndex = index % 9;
