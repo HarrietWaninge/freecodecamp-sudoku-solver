@@ -5,7 +5,9 @@ const Solver = require("../controllers/sudoku-solver.js");
 module.exports = function (app) {
   let solver = new Solver();
 
-  app.route("/api/check").post((req, res) => {});
+  app.route("/api/check").post((req, res) => {
+    console.log(req.body);
+  });
 
   app.route("/api/solve").post((req, res) => {
     let result;

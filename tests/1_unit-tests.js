@@ -5,31 +5,11 @@ const {
   invalidPuzzles,
   shortPuzzles,
 } = require("../controllers/puzzle-strings.js");
-
+const { createRandomString } = require("./helpers/test-utils.js");
 const Solver = require("../controllers/sudoku-solver.js");
 let solver = new Solver();
 
 suite("Unit Tests", () => {
-  function getSample() {
-    return puzzlesAndSolutions[
-      Math.floor(Math.random() * puzzlesAndSolutions.length)
-    ][0];
-  }
-  function createRandomString(length, valid) {
-    let chars;
-    let result = "";
-
-    if (valid) {
-      chars = ".123456789";
-    } else {
-      chars = ",#+)(}{][|abcd'";
-    }
-    for (let i = 0; i < length; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    // console.log("result:", result);
-    return result;
-  }
   suite("string validation", () => {
     test("Logic handles a valid puzzle string of 81 characters", () => {
       assert.deepEqual(solver.validate(puzzlesAndSolutions[0][0]), {
