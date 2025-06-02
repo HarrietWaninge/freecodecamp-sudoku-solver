@@ -83,11 +83,30 @@ suite("Functional Tests", () => {
           });
       });
     });
+    suite("check tests", function () {
+      test("Check a puzzle placement with all fields: POST request to /api/check", function (done) {
+        chai
+          .request(server)
+          .keepOpen()
+          .post("/api/check")
+          .type("form")
+          .send({
+            puzzle: puzzlesAndSolutions[0][0],
+            coordinate: "A3",
+            value: 4,
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.deepEqual(res.body, { hoi: "hoi" });
+            done(err);
+          });
+      });
+    });
   });
 });
 
-// Check a puzzle placement with all fields: POST request to /api/check
-// Check a puzzle placement with single placement conflict: POST request to /api/check
+//
+//
 // Check a puzzle placement with multiple placement conflicts: POST request to /api/check
 // Check a puzzle placement with all placement conflicts: POST request to /api/check
 // Check a puzzle placement with missing required fields: POST request to /api/check

@@ -6,7 +6,10 @@ module.exports = function (app) {
   let solver = new Solver();
 
   app.route("/api/check").post((req, res) => {
-    console.log(req.body);
+    let result;
+    let { puzzle, coordinate, value } = req.body;
+    result = solver.check(puzzle, coordinate[0], coordinate[1], value);
+    res.json({ hoi: "hoi" });
   });
 
   app.route("/api/solve").post((req, res) => {

@@ -31,6 +31,30 @@ class SudokuSolver {
     return { error: null };
   }
 
+  check(puzzleString, row, col, value) {
+    let parameterArray = [puzzleString, row, col, value];
+
+    let conflictArray = [
+      ...(!this.checkColPlacement(...parameterArray) ? ["column"] : []),
+      ...(!this.checkRowPlacement(...parameterArray) ? ["row"] : []),
+      ...(!this.checkRegionPlacement(...parameterArray) ? ["region"] : []),
+    ];
+
+    console.log(conflictArray);
+    let valid = !colConflict && !rowConflict && !regionConflict;
+
+    if (valid) {
+      return { valid: true };
+    } else {
+      return {
+        valid: false,
+        conflict: array,
+      };
+    }
+
+    console.log(valid);
+  }
+
   checkRowPlacement(puzzleString, row, column, value) {
     let targetRow = this.getRowString(puzzleString, row);
     let isPresent = targetRow.includes(value);
