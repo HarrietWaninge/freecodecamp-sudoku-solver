@@ -1,18 +1,20 @@
-'use strict';
+"use strict";
 
-const SudokuSolver = require('../controllers/sudoku-solver.js');
+const Solver = require("../controllers/sudoku-solver.js");
 
 module.exports = function (app) {
-  
-  let solver = new SudokuSolver();
+  let solver = new Solver();
 
-  app.route('/api/check')
-    .post((req, res) => {
+  app.route("/api/check").post((req, res) => {});
 
-    });
-    
-  app.route('/api/solve')
-    .post((req, res) => {
+  app.route("/api/solve").post((req, res) => {
+    let result;
+    if (req.body.puzzle) {
+      result = solver.solve(req.body.puzzle);
+    } else {
+      result = { error: "Required field missing" };
+    }
 
-    });
+    res.json(result);
+  });
 };

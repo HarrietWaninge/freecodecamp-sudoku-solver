@@ -32,24 +32,20 @@ suite("Unit Tests", () => {
   }
   suite("string validation", () => {
     test("Logic handles a valid puzzle string of 81 characters", () => {
-      assert.equal(
-        solver.validateCharacters(createRandomString(81, true)),
-        true
-      );
+      assert.deepEqual(solver.validate(puzzlesAndSolutions[0][0]), {
+        error: null,
+      });
     });
     test("Logic handles a puzzle string with invalid characters (not 1-9 or .)", () => {
-      assert.deepEqual(
-        solver.validateCharacters(createRandomString(81, false)),
-        {
-          error: "Invalid characters in puzzle",
-        }
-      );
+      assert.deepEqual(solver.validate(createRandomString(81, false)), {
+        error: "Invalid characters in puzzle",
+      });
     });
     test("Logic handles a puzzle string that is not 81 characters in length", () => {
-      assert.deepEqual(solver.validateCharacters(shortPuzzles[0]), {
+      assert.deepEqual(solver.validate(shortPuzzles[0]), {
         error: "Expected puzzle to be 81 characters long",
       });
-      assert.deepEqual(solver.validateCharacters(shortPuzzles[1]), {
+      assert.deepEqual(solver.validate(shortPuzzles[1]), {
         error: "Expected puzzle to be 81 characters long",
       });
     });
@@ -95,23 +91,28 @@ suite("Unit Tests", () => {
   suite("Solving-logic", () => {
     test("valid puzzle strings pass the solver", () => {
       for (let i = 0; i < puzzlesAndSolutions.length; i++) {
-        assert.equal(
-          solver.solve(puzzlesAndSolutions[i][0]),
-          puzzlesAndSolutions[i][1]
-        );
+        //  console.log("Valid Puzzle");
+        assert.deepEqual(solver.solve(puzzlesAndSolutions[i][0]), {
+          solution: puzzlesAndSolutions[i][1],
+        });
       }
     });
     test("Invalid puzzle strings fail the solver", () => {
       for (let i = 0; i < puzzlesAndSolutions.length; i++) {
+        //  console.log("invalid puzzle");
         assert.deepEqual(solver.solve(invalidPuzzles[i]), {
           error: "Puzzle cannot be solved",
         });
       }
     });
+    test("Solver returns the expected solution for an incomplete puzzle", () => {
+      //I honestly don't know what I should have tested with the "valid puzzle strings pass the solver" test.
+      for (let i = 0; i < puzzlesAndSolutions.length; i++) {
+        //  console.log("Valid Puzzle");
+        assert.deepEqual(solver.solve(puzzlesAndSolutions[i][0]), {
+          solution: puzzlesAndSolutions[i][1],
+        });
+      }
+    });
   });
 });
-
-/**
- * 
-Invalid puzzle strings fail the solver
-Solver returns the expected solution for an incomplete puzzle */
