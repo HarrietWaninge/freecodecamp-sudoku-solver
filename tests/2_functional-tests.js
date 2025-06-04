@@ -54,7 +54,7 @@ suite("Functional Tests", () => {
             done(err);
           });
       });
-      test("Solve a puzzle with invalid characters: POST request to /api/solve", function (done) {
+      test("Solve a puzzle with incorrect length: POST request to /api/solve", function (done) {
         chai
           .request(server)
           .keepOpen()
@@ -69,7 +69,7 @@ suite("Functional Tests", () => {
             done(err);
           });
       });
-      test("Solve a puzzle with invalid characters: POST request to /api/solve", function (done) {
+      test("Solve a puzzle that cannot be solved: POST request to /api/solve", function (done) {
         chai
           .request(server)
           .keepOpen()
@@ -92,24 +92,93 @@ suite("Functional Tests", () => {
           .type("form")
           .send({
             puzzle: puzzlesAndSolutions[0][0],
+            coordinate: "A2",
+            value: 3,
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.deepEqual(res.body, { valid: true });
+            done(err);
+          });
+      });
+      test("Check a puzzle placement with single placement conflict: POST request to /api/check", function (done) {
+        chai
+          .request(server)
+          .keepOpen()
+          .post("/api/check")
+          .type("form")
+          .send({
+            puzzle: puzzlesAndSolutions[0][0],
             coordinate: "A3",
             value: 4,
           })
           .end(function (err, res) {
             assert.equal(res.status, 200);
-            assert.deepEqual(res.body, { hoi: "hoi" });
+            assert.deepEqual(res.body, {
+              valid: false,
+              conflict: ["row"],
+            });
             done(err);
           });
       });
+      test("Check a puzzle placement with multiple placement conflicts: POST request to /api/check", function (done) {
+        chai
+          .request(server)
+          .keepOpen()
+          .post("/api/check")
+          .type("form")
+          .send({
+            puzzle: puzzlesAndSolutions[0][0],
+            coordinate: "B1",
+            value: 3,
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.deepEqual(res.body, {
+              valid: false,
+              conflict: ["column", "row"],
+            });
+            done(err);
+          });
+      });
+      test("Check a puzzle placement with all placement conflicts: POST request to /api/check", function (done) {
+        chai
+          .request(server)
+          .keepOpen()
+          .post("/api/check")
+          .type("form")
+          .send({
+            puzzle: puzzlesAndSolutions[0][0],
+            coordinate: "H8",
+            value: 9,
+          })
+          .end(function (err, res) {
+            assert.equal(res.status, 200);
+            assert.deepEqual(res.body, {
+              valid: false,
+              conflict: ["column", "row", "region"],
+            });
+            done(err);
+          });
+      });
+    });
+    test("Check a puzzle placement with missing required fields: POST request to /api/check", function (done) {
+      chai
+        .request(server)
+        .keepOpen()
+        .post("/api/check")
+        .type("form")
+        .send()
+        .end(function (err, res) {
+          assert.equal(res.status, 200);
+          assert.deepEqual(res.body, { error: "Required field(s) missing" });
+          done(err);
+        });
     });
   });
 });
 
 //
-//
-// Check a puzzle placement with multiple placement conflicts: POST request to /api/check
-// Check a puzzle placement with all placement conflicts: POST request to /api/check
-// Check a puzzle placement with missing required fields: POST request to /api/check
 // Check a puzzle placement with invalid characters: POST request to /api/check
 // Check a puzzle placement with incorrect length: POST request to /api/check
 // Check a puzzle placement with invalid placement coordinate: POST request to /api/check
