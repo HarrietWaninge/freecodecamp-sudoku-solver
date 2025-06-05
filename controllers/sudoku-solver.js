@@ -31,23 +31,65 @@ class SudokuSolver {
     return { error: null };
   }
 
-  check(puzzleString, row, col, value) {
+  check(puzzleString, coordinate, value) {
+    //check for any input that's not valid and get the error
+    let inputErrors = this.checkForErrors(puzzleString, coordinate, value);
+    // console.log("errors", inputErrors);
+    //if there's an error, return it
+    if (inputErrors.error) {
+      return inputErrors;
+    }
+
+    let row = coordinate[0];
+    let col = coordinate[1];
     let parameterArray = [puzzleString, row, col, value];
     let result;
+    //check the 3 different requirements and store their string if false
     let conflictArray = [
       ...(!this.checkColPlacement(...parameterArray) ? ["column"] : []),
       ...(!this.checkRowPlacement(...parameterArray) ? ["row"] : []),
       ...(!this.checkRegionPlacement(...parameterArray) ? ["region"] : []),
     ];
-
+    //build the result object
     result = {
       valid: conflictArray.length == 0,
       ...(conflictArray.length !== 0 && { conflict: conflictArray }),
     };
-    console.log("result", result);
 
     return result;
   }
+
+  checkForErrors(puzzleString, coordinate, value) {
+    let puzzleStringError = this.validate(puzzleString);
+    let validCoordinates = this.validateCoordinate(puzzleString, coordinate);
+    if (puzzleStringError.error) {
+      return puzzleStringError;
+    } else if (!validCoordinates) {
+      return { error: "Invalid coordinate" };
+    } else if (!this.validateSudokuNumber(value)) {
+      return { error: "Invalid value" };
+    } else return { error: null };
+  }
+  validateCoordinate(puzzleString, coordinate) {
+    let coordinateRegex = /^[a-i][1-9]$/i;
+
+    if (!coordinateRegex.test(coordinate)) {
+      return false;
+    }
+    let row = coordinate[0];
+    let col = coordinate[1];
+    return (
+      this.getRowString(puzzleString, row) !== null &&
+      this.getColString(puzzleString, col) !== null
+    );
+  }
+
+  validateSudokuNumber(value) {
+    let regEx = /^[1-9]$/;
+    return regEx.test(value);
+  }
+
+  // to do: check type of row..
 
   checkRowPlacement(puzzleString, row, column, value) {
     let targetRow = this.getRowString(puzzleString, row);
@@ -55,9 +97,12 @@ class SudokuSolver {
     return !isPresent;
   }
   getRowString(puzzleString, row) {
-    const rowLetters = "abcdefghijklmnopqrstuvwxyz";
-    let regex = new RegExp(`${row}`, "i");
-    let numberEnd = this.numberOfColsRows * (rowLetters.match(regex).index + 1);
+    const rowLetters = "abcdefghi";
+    let rowIndex = rowLetters.toLowerCase().indexOf(row.toLowerCase());
+    if (rowIndex === -1) {
+      return null;
+    }
+    let numberEnd = this.numberOfColsRows * (rowIndex + 1);
     let numberStart = numberEnd - this.numberOfColsRows;
     let targetRow = puzzleString.substring(numberStart, numberEnd);
     return targetRow;
@@ -67,23 +112,14 @@ class SudokuSolver {
     // console.log("puzzle:", puzzleString, row, column, value);
     let targetColumn = this.getColString(puzzleString, column);
     let isPresent = targetColumn.includes(value);
-    // console.log(
-    //   "puzzle:",
-    //   puzzleString,
-    //   "we're in: ",
-    //   `${row}${column}`,
-    //   "whith value:",
-    //   value,
-    //   "and targetColumn:",
-    //   targetColumn,
-    //   "isPresent: ",
-    //   isPresent
-    // );
 
     return !isPresent;
   }
 
   getColString(puzzleString, column) {
+    if (!this.validateSudokuNumber(column)) {
+      return null;
+    }
     let targetColumn = "";
     for (let i = 0; i < this.numberOfCharacters; i++) {
       if (i % 9 == column - 1) {
@@ -121,7 +157,7 @@ class SudokuSolver {
   }
 
   getRowRegionIndex(row) {
-    const rowLetters = "abcdefghijklmnopqrstuvwxyz";
+    const rowLetters = "abcdefghi";
     let rowIndex = rowLetters.indexOf(row.toLowerCase());
     let rowRegionIndex = Math.floor(rowIndex / 3);
     return rowRegionIndex;
@@ -223,9 +259,9 @@ class SudokuSolver {
 
   getCoordinates(index) {
     //get row letter
-    let alphabet = "abcdefghi";
+    const rowLetters = "abcdefghi";
     let rowIndex = Math.floor(index / 9);
-    let row = alphabet[rowIndex];
+    let row = rowLetters[rowIndex];
 
     //get column number
     let columnIndex = index % 9;

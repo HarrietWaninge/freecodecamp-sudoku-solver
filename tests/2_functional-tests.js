@@ -175,11 +175,94 @@ suite("Functional Tests", () => {
           done(err);
         });
     });
+    test("Check a puzzle placement with invalid characters: POST request to /api/check", function (done) {
+      chai
+        .request(server)
+        .keepOpen()
+        .post("/api/check")
+        .type("form")
+        .send({
+          puzzle: puzzlesAndSolutions[0][0],
+          coordinate: "J8",
+          value: 9,
+        })
+        .end(function (err, res) {
+          assert.equal(res.status, 200);
+          assert.deepEqual(res.body, { error: "Invalid coordinate" });
+          done(err);
+        });
+    });
+    test("Check a puzzle placement with incorrect length: POST request to /api/check", function (done) {
+      chai
+        .request(server)
+        .keepOpen()
+        .post("/api/check")
+        .type("form")
+        .send({
+          puzzle: createRandomString(80, true),
+          coordinate: "a9",
+          value: 9,
+        })
+        .end(function (err, res) {
+          assert.equal(res.status, 200);
+          assert.deepEqual(res.body, {
+            error: "Expected puzzle to be 81 characters long",
+          });
+          done(err);
+        });
+    });
+    test("Check a puzzle placement with invalid placement coordinate: POST request to /api/check", function (done) {
+      chai
+        .request(server)
+        .keepOpen()
+        .post("/api/check")
+        .type("form")
+        .send({
+          puzzle: puzzlesAndSolutions[0][0],
+          coordinate: "M10",
+          value: 9,
+        })
+        .end(function (err, res) {
+          assert.equal(res.status, 200);
+          assert.deepEqual(res.body, { error: "Invalid coordinate" });
+          done(err);
+        });
+    });
+    test("Check a puzzle placement with invalid placement value: POST request to /api/check", function (done) {
+      chai
+        .request(server)
+        .keepOpen()
+        .post("/api/check")
+        .type("form")
+        .send({
+          puzzle: puzzlesAndSolutions[0][0],
+          coordinate: "i9",
+          value: 99,
+        })
+        .end(function (err, res) {
+          assert.equal(res.status, 200);
+          assert.deepEqual(res.body, { error: "Invalid value" });
+          done(err);
+        });
+    });
+    test("Check a puzzle placement with the same value as is in that coordinate", function (done) {
+      chai
+        .request(server)
+        .keepOpen()
+        .post("/api/check")
+        .type("form")
+        .send({
+          puzzle: puzzlesAndSolutions[0][0],
+          coordinate: "A1",
+          value: 1,
+        })
+        .end(function (err, res) {
+          assert.equal(res.status, 200);
+          assert.deepEqual(res.body, { valid: true });
+          done(err);
+        });
+    });
   });
 });
 
-//
-// Check a puzzle placement with invalid characters: POST request to /api/check
-// Check a puzzle placement with incorrect length: POST request to /api/check
-// Check a puzzle placement with invalid placement coordinate: POST request to /api/check
 // Check a puzzle placement with invalid placement value: POST request to /api/check
