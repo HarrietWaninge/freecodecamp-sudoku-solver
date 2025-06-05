@@ -18,9 +18,13 @@ module.exports = function (app) {
   });
 
   app.route("/api/solve").post((req, res) => {
-    if (!req.body.puzzle) {
-      return res.json({ error: "Required field missing" });
+    try {
+      if (!req.body.puzzle) {
+        return res.json({ error: "Required field missing" });
+      }
+      res.json(solver.solve(req.body.puzzle));
+    } catch (error) {
+      console.log("ERROR:", error);
     }
-    res.json(solver.solve(req.body.puzzle));
   });
 };

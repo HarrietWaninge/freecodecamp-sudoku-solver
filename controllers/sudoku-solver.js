@@ -4,6 +4,7 @@ class SudokuSolver {
   constructor() {
     this.numberOfColsRows = 9;
     this.numberOfCharacters = this.numberOfColsRows * this.numberOfColsRows;
+    this.rowLetters = "abcdefghi";
   }
 
   validate(puzzleString) {
@@ -42,7 +43,13 @@ class SudokuSolver {
 
     let row = coordinate[0];
     let col = coordinate[1];
-    let parameterArray = [puzzleString, row, col, value];
+    let newPuzzleString = this.replaceCoordinateValue(
+      puzzleString,
+      row,
+      col,
+      "."
+    );
+    let parameterArray = [newPuzzleString, row, col, value];
     let result;
     //check the 3 different requirements and store their string if false
     let conflictArray = [
@@ -57,6 +64,16 @@ class SudokuSolver {
     };
 
     return result;
+  }
+
+  replaceCoordinateValue(puzzleString, row, col, newValue) {
+    // console.log("VALUES:", puzzleString, row, col, newValue);
+
+    let index = this.getIndexFromCoordinates(row, col);
+    let puzzleArray = puzzleString.split("");
+    puzzleArray[index] = newValue;
+    let newPuzzleString = puzzleArray.join("");
+    return newPuzzleString;
   }
 
   checkForErrors(puzzleString, coordinate, value) {
@@ -89,16 +106,13 @@ class SudokuSolver {
     return regEx.test(value);
   }
 
-  // to do: check type of row..
-
   checkRowPlacement(puzzleString, row, column, value) {
     let targetRow = this.getRowString(puzzleString, row);
     let isPresent = targetRow.includes(value);
     return !isPresent;
   }
   getRowString(puzzleString, row) {
-    const rowLetters = "abcdefghi";
-    let rowIndex = rowLetters.toLowerCase().indexOf(row.toLowerCase());
+    let rowIndex = this.rowLetters.toLowerCase().indexOf(row.toLowerCase());
     if (rowIndex === -1) {
       return null;
     }
@@ -157,8 +171,7 @@ class SudokuSolver {
   }
 
   getRowRegionIndex(row) {
-    const rowLetters = "abcdefghi";
-    let rowIndex = rowLetters.indexOf(row.toLowerCase());
+    let rowIndex = this.rowLetters.indexOf(row.toLowerCase());
     let rowRegionIndex = Math.floor(rowIndex / 3);
     return rowRegionIndex;
   }
@@ -175,7 +188,6 @@ class SudokuSolver {
       return puzzleError;
     }
 
-    let puzzleArray = puzzleString.split("");
     let solved;
     let repeat = true;
 
@@ -183,13 +195,18 @@ class SudokuSolver {
 
     while (repeat) {
       for (let i = 0; i < puzzleString.length; i++) {
-        if (puzzleArray[i] === ".") {
+        if (puzzleString[i] === ".") {
           //if the character is a dot, get all the possible numbers for this spot
-          let options = this.getOptions(puzzleArray, i);
+          let options = this.getOptions(puzzleString, i);
           if (options.length === 1) {
             //if there is only 1 option, put it in place
-            puzzleArray[i] = options[0];
-            changedPuzzleString = puzzleArray.join("");
+            let { row, col } = this.getCoordinatesFromIndex(i);
+            changedPuzzleString = this.replaceCoordinateValue(
+              puzzleString,
+              row,
+              col,
+              options[0]
+            );
           }
         }
       }
@@ -222,7 +239,7 @@ class SudokuSolver {
         puzzleArray[i] = ".";
         let testPuzzleString = puzzleArray.join("");
 
-        let { row, col } = this.getCoordinates(i);
+        let { row, col } = this.getCoordinatesFromIndex(i);
         let parameters = [testPuzzleString, row, col, puzzleString[i]];
         if (!this.checkOnePlace(parameters)) {
           // console.log("this is false:", ...parameters);
@@ -235,18 +252,13 @@ class SudokuSolver {
     return valid;
   }
 
-  getOptions(puzzleArray, index) {
-    let coordinates = this.getCoordinates(index);
+  getOptions(puzzleString, index) {
+    let coordinates = this.getCoordinatesFromIndex(index);
     let indexData = { index, ...coordinates, options: [] };
 
     for (let i = 1; i < 10; i++) {
       //check numbers 1-9 to see if it is an option on this location
-      let parameters = [
-        puzzleArray.join(""),
-        coordinates.row,
-        coordinates.col,
-        i,
-      ];
+      let parameters = [puzzleString, coordinates.row, coordinates.col, i];
       if (this.checkOnePlace(parameters)) {
         // if it is an option, put it as an option in the indexData
         indexData.options.push(i);
@@ -257,16 +269,24 @@ class SudokuSolver {
     return indexData.options;
   }
 
-  getCoordinates(index) {
+  getCoordinatesFromIndex(index) {
     //get row letter
-    const rowLetters = "abcdefghi";
     let rowIndex = Math.floor(index / 9);
-    let row = rowLetters[rowIndex];
+    let row = this.rowLetters[rowIndex];
 
     //get column number
     let columnIndex = index % 9;
 
     return { row: row, col: columnIndex + 1 };
+  }
+
+  getIndexFromCoordinates(row, col) {
+    //for example B1 to index 9
+    let colIndex = col - 1;
+    let rowNumber = this.rowLetters.indexOf(row.toLowerCase());
+    let index = rowNumber + colIndex + rowNumber * 8;
+
+    return index;
   }
 
   checkOnePlace(parameterArray) {
