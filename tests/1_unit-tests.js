@@ -78,7 +78,6 @@ suite("Unit Tests", () => {
     });
     test("Invalid puzzle strings fail the solver", () => {
       for (let i = 0; i < puzzlesAndSolutions.length; i++) {
-        //  console.log("invalid puzzle");
         assert.deepEqual(solver.solve(invalidPuzzles[i]), {
           error: "Puzzle cannot be solved",
         });
