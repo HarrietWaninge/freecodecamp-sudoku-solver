@@ -14,18 +14,15 @@ class SudokuSolver {
     hasInvalidChar = regEx.test(puzzleString);
 
     if (hasInvalidChar) {
-      // console.log("has inval char");
       return { error: "Invalid characters in puzzle" };
     }
     isWrongLength = puzzleString.length != this.numberOfCharacters;
 
     if (isWrongLength) {
-      // console.log("is wrong length");
       return { error: "Expected puzzle to be 81 characters long" };
     }
     hasMistakes = !this.checkValidity(puzzleString);
     if (hasMistakes) {
-      // console.log("hasmistakes");
       return { error: "Puzzle cannot be solved" };
     }
 
@@ -35,14 +32,15 @@ class SudokuSolver {
   check(puzzleString, coordinate, value) {
     //check for any input that's not valid and get the error
     let inputErrors = this.checkForErrors(puzzleString, coordinate, value);
-    // console.log("errors", inputErrors);
-    //if there's an error, return it
+
     if (inputErrors.error) {
       return inputErrors;
     }
 
+    let result;
     let row = coordinate[0];
     let col = coordinate[1];
+    //replace current value with a dot so it won't show up in the comparison
     let newPuzzleString = this.replaceCoordinateValue(
       puzzleString,
       row,
@@ -50,7 +48,6 @@ class SudokuSolver {
       "."
     );
     let parameterArray = [newPuzzleString, row, col, value];
-    let result;
     //check the 3 different requirements and store their string if false
     let conflictArray = [
       ...(!this.checkColPlacement(...parameterArray) ? ["column"] : []),
@@ -67,8 +64,6 @@ class SudokuSolver {
   }
 
   replaceCoordinateValue(puzzleString, row, col, newValue) {
-    // console.log("VALUES:", puzzleString, row, col, newValue);
-
     let index = this.getIndexFromCoordinates(row, col);
     let puzzleArray = puzzleString.split("");
     puzzleArray[index] = newValue;
@@ -191,8 +186,6 @@ class SudokuSolver {
     let solved;
     let repeat = true;
 
-    //  console.log("puzzlestringBEFORE", puzzleString);
-
     while (repeat) {
       for (let i = 0; i < puzzleString.length; i++) {
         if (puzzleString[i] === ".") {
@@ -226,10 +219,8 @@ class SudokuSolver {
   }
 
   checkValidity(puzzleString) {
-    //checkFor Duplicate numbers
-    // let puzzle = this.getPuzzleGrid(puzzleString);
+    //check For Duplicate numbers
     let valid = true;
-    // console.log("puzzlestring:", puzzleString);
 
     //check every number on corectness
     for (let i = 0; i < puzzleString.length; i++) {
@@ -242,13 +233,11 @@ class SudokuSolver {
         let { row, col } = this.getCoordinatesFromIndex(i);
         let parameters = [testPuzzleString, row, col, puzzleString[i]];
         if (!this.checkOnePlace(parameters)) {
-          // console.log("this is false:", ...parameters);
           //and set valid to false if a number isn't placed corectly
           return !valid;
         }
       }
     }
-    //console.log("ps", puzzleString, valid);
     return valid;
   }
 
@@ -264,8 +253,6 @@ class SudokuSolver {
         indexData.options.push(i);
       }
     }
-
-    // console.log(indexData);
     return indexData.options;
   }
 
@@ -281,7 +268,6 @@ class SudokuSolver {
   }
 
   getIndexFromCoordinates(row, col) {
-    //for example B1 to index 9
     let colIndex = col - 1;
     let rowNumber = this.rowLetters.indexOf(row.toLowerCase());
     let index = rowNumber + colIndex + rowNumber * 8;
@@ -290,21 +276,11 @@ class SudokuSolver {
   }
 
   checkOnePlace(parameterArray) {
-    // console.log(
-    //   "col",
-    //   this.checkColPlacement(...parameterArray),
-    //   "row",
-    //   this.checkRowPlacement(...parameterArray),
-    //   "region",
-    //   this.checkRegionPlacement(...parameterArray)
-    // );
-    // console.log("params", parameterArray);
     let valid =
       this.checkColPlacement(...parameterArray) &&
       this.checkRowPlacement(...parameterArray) &&
       this.checkRegionPlacement(...parameterArray);
 
-    //console.log("valid:", valid);
     return valid;
   }
 }
