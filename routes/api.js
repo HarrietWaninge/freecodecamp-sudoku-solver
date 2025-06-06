@@ -11,7 +11,7 @@ module.exports = function (app) {
       if (!coordinate || !value || !puzzle) {
         return res.json({ error: "Required field(s) missing" });
       }
-      res.json(solver.check(puzzle, coordinate, value)); //to do, validate coordinate
+      res.json(solver.check(puzzle, coordinate, value));
     } catch (error) {
       console.log("ERROR", error);
     }

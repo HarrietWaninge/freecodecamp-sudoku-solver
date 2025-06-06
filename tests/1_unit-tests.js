@@ -71,7 +71,6 @@ suite("Unit Tests", () => {
   suite("Solving-logic", () => {
     test("valid puzzle strings pass the solver", () => {
       for (let i = 0; i < puzzlesAndSolutions.length; i++) {
-        //  console.log("Valid Puzzle");
         assert.deepEqual(solver.solve(puzzlesAndSolutions[i][0]), {
           solution: puzzlesAndSolutions[i][1],
         });
@@ -88,7 +87,6 @@ suite("Unit Tests", () => {
     test("Solver returns the expected solution for an incomplete puzzle", () => {
       //I honestly don't know what I should have tested with the "valid puzzle strings pass the solver" test.
       for (let i = 0; i < puzzlesAndSolutions.length; i++) {
-        //  console.log("Valid Puzzle");
         assert.deepEqual(solver.solve(puzzlesAndSolutions[i][0]), {
           solution: puzzlesAndSolutions[i][1],
         });

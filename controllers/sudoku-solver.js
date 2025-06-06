@@ -118,7 +118,6 @@ class SudokuSolver {
   }
 
   checkColPlacement(puzzleString, row, column, value) {
-    // console.log("puzzle:", puzzleString, row, column, value);
     let targetColumn = this.getColString(puzzleString, column);
     let isPresent = targetColumn.includes(value);
 
@@ -212,7 +211,6 @@ class SudokuSolver {
     //check if there are still dots in the string, to check if the puzzle is solved
     solved = !puzzleString.includes(".");
 
-    // console.log("puzzlestring", puzzleString);
     return solved
       ? { solution: puzzleString }
       : { error: "Puzzle cannot be solved" };
